@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RPG³ · Animus Tabletop RPG: Open Browser Playtest &amp; Scout Preview</title>
+  <meta
+    name="description"
+    content="Playtest RPG³ in your browser with zero download. Build on a five-layer 5x5 Cube where tiles are both your stats and your life, bond wild Sprites, and earn East-Gate clearance."
+  />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&amp;family=Lora:ital,wght@0,400;0,500;0,600;1,400&amp;display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    /* =========================================================================
+       RPG³ Public Playtest & Scout Funnel Stylesheet (docs/20_STYLE_CANON.md v1.12)
+       - Fonts: Cormorant Garamond (500, 600) + Lora (400, 500, 600 tnum, italic).
+       - Browser Floor: Body >= 15px, Secondary/Controls >= 13px, serif-only typography,
+         zero font-weight > 600, zero pure white fills, zero CSS gradients, zero emojis.
+       - Antique Gold (#b68235): stroke, rule, and small-caps ornament ONLY.
+       - Reserved Spirit-Band hexes: strictly confined to the labeled Band-Ladder box.
+       ========================================================================= */
+    :root {
+      --paper-stock: #f6f3ec;
+      --plate-mat: #faf8f2;
+      --app-bg: #f3f2f2;
+      --tile-stone: #d6d2c8;
+      --tile-border: #b3ac9e;
+      --frame-line: #b7b0a3;
+      --grid-hairline: #cdc6b8;
+      --inner-rule: #e0dacc;
+
+      --ink-primary: #26231f;
+      --ink-secondary: #4a453d;
+      --ink-field: #3d382f;
+      --ink-flavor: #5c564c;
+      --ink-caption: #8b857a;
+      --glyph-spent: #9a958d;
+      --accent-gold-stroke: #b68235;
+
+      --attr-h: #57754c;
+      --attr-s: #7a5a3a;
+      --attr-f: #3f7d7a;
+      --attr-a: #453a6e;
+      --attr-sp: #96487a;
+
+      --font-display: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+      --font-body: 'Lora', Georgia, 'Times New Roman', serif;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--app-bg);
+      color: var(--ink-primary);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.58;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: var(--ink-primary);
+      margin: 0;
+      letter-spacing: 0.01em;
+    }
+
+    b,
+    strong,
+    th {
+      font-weight: 600;
+    }
+
+    a {
+      color: var(--ink-primary);
+      text-underline-offset: 3px;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: var(--ink-primary);
+    }
+
+    .tnum {
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: 'tnum';
+    }
+
+    .page-shell {
+      max-width: 1160px;
+      margin: 0 auto;
+      padding: 20px 18px 56px;
+    }
+
+    /* Top Almanac Masthead */
+    .top-bar {
+      background-color: var(--paper-stock);
+      border: 1px solid var(--frame-line);
+      border-bottom: 2px solid var(--ink-primary);
+      border-radius: 6px;
+      padding: 12px 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .brand-lockup {
+      border-left: 3px solid var(--accent-gold-stroke);
+      padding-left: 12px;
+    }
+
+    .kicker {
+      display: block;
+      font-size: 12.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--ink-flavor);
+      font-weight: 600;
+    }
+
+    .brand-title {
+      font-size: 1.55rem;
+      line-height: 1.12;
+    }
+
+    .nav-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn-canon {
+      background-color: var(--plate-mat);
+      color: var(--ink-primary);
+      border: 1px solid var(--frame-line);
+      border-radius: 4px;
+      padding: 8px 14px;
+      min-height: 40px;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: background-color 0.14s ease, border-color 0.14s ease;
+    }
+
+    .btn-canon:hover {
+      background-color: var(--tile-stone);
+      border-color: var(--ink-primary);
+    }
+
+    .btn-canon-ink {
+      background-color: var(--ink-primary);
+      color: var(--paper-stock);
+      border-color: var(--ink-primary);
+    }
+
+    .btn-canon-ink:hover {
+      background-color: var(--ink-field);
+      color: var(--paper-stock);
+      border-color: var(--ink-primary);
+    }
+
+    .btn-canon-gold-outline {
+      border-color: var(--accent-gold-stroke);
+      border-width: 1.5px;
+    }
+
+    .btn-canon.is-active {
+      background-color: var(--ink-primary);
+      color: var(--paper-stock);
+      border-color: var(--ink-primary);
+    }
+
+    .btn-canon.is-active:hover {
+      background-color: var(--ink-field);
+      color: var(--paper-stock);
+    }
+
+    .double-rule {
+      border: 0;
+      border-top: 1.5px solid var(--ink-primary);
+      border-bottom: 1px solid var(--ink-primary);
+      height: 4px;
+      margin: 10px 0 16px;
+    }
+
+    /* Hero Split: Pitch + Interactive 5-Layer Cube Inspector */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.12fr 0.98fr;
+      gap: 18px;
+      align-items: start;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .paper-sheet {
+      background-color: var(--paper-stock);
+      border: 1px solid var(--frame-line);
+      border-radius: 6px;
+      padding: 22px;
+      box-shadow: 0 2px 10px rgba(38, 35, 31, 0.05);
+    }
+
+    .hero-headline {
+      font-size: 2.35rem;
+      line-height: 1.08;
+      margin: 6px 0 12px;
+    }
+
+    @media (max-width: 600px) {
+      .hero-headline {
+        font-size: 1.88rem;
+      }
+      .paper-sheet {
+        padding: 16px;
+      }
+    }
+
+    .lead-copy {
+      font-size: 1.05rem;
+      color: var(--ink-secondary);
+      margin: 0 0 16px;
+    }
+
+    .cta-cluster {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .fact-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid var(--inner-rule);
+    }
+
+    @media (max-width: 540px) {
+      .fact-strip {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .fact-cell {
+      background-color: var(--plate-mat);
+      border: 1px solid var(--inner-rule);
+      border-radius: 4px;
+      padding: 8px 10px;
+    }
+
+    .fact-val {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 600;
+      line-height: 1.1;
+      color: var(--ink-primary);
+    }
+
+    .fact-lbl {
+      font-size: 13px;
+      color: var(--ink-flavor);
+    }
+
+    /* Interactive 5-Layer Cube Inspector */
+    .layer-tab-row {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 5px;
+      margin: 10px 0;
+    }
+
+    .layer-tab {
+      background-color: var(--plate-mat);
+      border: 1px solid var(--frame-line);
+      border-radius: 4px;
+      padding: 6px 4px;
+      min-height: 38px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--ink-secondary);
+      cursor: pointer;
+      text-align: center;
+    }
+
+    .layer-tab.is-active {
+      background-color: var(--ink-primary);
+      color: var(--paper-stock);
+      border-color: var(--ink-primary);
+    }
+
+    .cube-stage {
+      position: relative;
+      background-color: var(--plate-mat);
+      border: 1.5px solid var(--frame-line);
+      border-radius: 8px;
+      padding: 14px;
+      overflow: hidden;
+    }
+
+    .cube-wash-bg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .cube-grid-interactive {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      max-width: 310px;
+      aspect-ratio: 1 / 1;
+      margin: 0 auto;
+    }
+
+    .cube-socket {
+      background-color: rgba(246, 243, 236, 0.76);
+      border: 1px dashed var(--grid-hairline);
+      border-radius: 5px;
+      padding: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+    }
+
+    .stone-tile-btn {
+      width: 100%;
+      height: 100%;
+      background-color: var(--tile-stone);
+      border: 1.5px solid var(--tile-border);
+      border-bottom-width: 3px;
+      border-right-width: 2.5px;
+      border-radius: 5px;
+      padding: 2px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      transition: background-color 0.12s ease;
+    }
+
+    .stone-tile-btn:hover {
+      border-color: var(--ink-primary);
+    }
+
+    .stone-tile-btn.is-flipped {
+      background-color: var(--inner-rule);
+      border-style: dashed;
+      border-bottom-width: 1.5px;
+      border-right-width: 1.5px;
+    }
+
+    .tile-code {
+      font-size: 12px;
+      line-height: 1;
+      font-weight: 600;
+      color: var(--ink-primary);
+    }
+
+    .stone-tile-btn.is-flipped .tile-code {
+      color: var(--ink-flavor);
+    }
+
+    .inspector-readout {
+      margin-top: 10px;
+      background-color: var(--plate-mat);
+      border: 1px solid var(--inner-rule);
+      border-left: 3px solid var(--accent-gold-stroke);
+      border-radius: 4px;
+      padding: 9px 11px;
+      font-size: 14px;
+      color: var(--ink-secondary);
+    }
+
+    .scalar-readout-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .scalar-pill {
+      background-color: var(--paper-stock);
+      border: 1px solid var(--grid-hairline);
+      border-radius: 4px;
+      padding: 5px 8px;
+      text-align: center;
+      font-size: 13px;
+    }
+
+    /* Three Pillars Section */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 860px) {
+      .pillars-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .pillar-card {
+      background-color: var(--paper-stock);
+      border: 1px solid var(--frame-line);
+      border-radius: 6px;
+      padding: 18px;
+    }
+
+    .pillar-card h3 {
+      font-size: 1.38rem;
+      margin: 4px 0 8px;
+    }
+
+    .pillar-card p {
+      margin: 0;
+      font-size: 15px;
+      color: var(--ink-secondary);
+    }
+
+    /* Labeled Spirit-Band Ladder Reference Box (20 §9.4 — ONLY legal home for band hexes) */
+    .band-ladder-section {
+      background-color: var(--plate-mat);
+      border: 1px solid var(--frame-line);
+      border-radius: 6px;
+      padding: 16px 18px;
+      margin-bottom: 20px;
+    }
+
+    .band-ladder-steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 720px) {
+      .band-ladder-steps {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .band-step-card {
+      background-color: var(--paper-stock);
+      border: 1px solid var(--inner-rule);
+      border-radius: 4px;
+      padding: 9px 10px;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .band-step-card.is-slice-focus {
+      border-color: var(--ink-primary);
+      border-width: 1.5px;
+    }
+
+    .band-disc {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Playtest Protocol + Dual-Track Funnel Grid */
+    .funnel-grid {
+      display: grid;
+      grid-template-columns: 0.92fr 1.08fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .funnel-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .step-list {
+      margin: 10px 0 0;
+      padding-left: 20px;
+      color: var(--ink-secondary);
+    }
+
+    .step-list li {
+      margin-bottom: 9px;
+    }
+
+    .ownership-box {
+      margin-top: 16px;
+      background-color: var(--plate-mat);
+      border: 1px solid var(--frame-line);
+      border-left: 3px solid var(--accent-gold-stroke);
+      border-radius: 4px;
+      padding: 11px 13px;
+      font-size: 14px;
+      color: var(--ink-secondary);
+    }
+
+    .track-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .form-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 560px) {
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .field-label {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--ink-field);
+    }
+
+    .input-canon,
+    .select-canon,
+    .textarea-canon {
+      background-color: var(--plate-mat);
+      border: 1px solid var(--frame-line);
+      border-radius: 4px;
+      padding: 8px 10px;
+      min-height: 40px;
+      width: 100%;
+    }
+
+    .input-canon:focus,
+    .select-canon:focus,
+    .textarea-canon:focus {
+      outline: 2px solid var(--ink-primary);
+      outline-offset: 1px;
+    }
+
+    .receipt-box {
+      margin-top: 14px;
+      background-color: var(--plate-mat);
+      border: 1.5px solid var(--ink-primary);
+      border-radius: 5px;
+      padding: 13px 15px;
+      font-size: 14px;
+    }
+
+    .receipt-pre {
+      background-color: var(--paper-stock);
+      border: 1px solid var(--grid-hairline);
+      border-radius: 4px;
+      padding: 9px 11px;
+      font-size: 13px;
+      overflow-x: auto;
+      white-space: pre-wrap;
+      margin: 8px 0;
+    }
+
+    .site-footer {
+      margin-top: 28px;
+      padding-top: 14px;
+      border-top: 1px solid var(--frame-line);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 13.5px;
+      color: var(--ink-flavor);
+    }
+  </style>
+</head>
+<body>
+  <!-- Hidden SVG Filter Definition: 20 §5 Organic Watercolor Wash (seed=17 recorded, behind Cube plate only, never under text) -->
+  <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+    <defs>
+      <filter id="rpg3-watercolor-wash" x="-10%" y="-10%" width="120%" height="120%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="3" seed="17" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="14" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="page-shell">
+    <!-- ==================== TOP MASTHEAD ==================== -->
+    <header class="top-bar">
+      <div class="brand-lockup">
+        <span class="kicker">ANIMUS TABLETOP RPG · OPEN DIGITAL PLAYTEST</span>
+        <h1 class="brand-title">RPG³ · Angel's Rest &amp; North-Ridge</h1>
+      </div>
+      <nav class="nav-actions" aria-label="Primary Playtest Navigation">
+        <a class="btn-canon btn-canon-ink" href="https://anima7ed.github.io/rpg-cubed-playtest/">
+          Launch Browser Tabletop
+        </a>
+        <a class="btn-canon" href="https://anima7ed.github.io/rpg-cubed-playtest/M5_TESTER_BRIEF.md">
+          1-Page Tester Brief
+        </a>
+        <a class="btn-canon btn-canon-gold-outline" href="#signup">
+          Join Cohort / Scout Desk
+        </a>
+      </nav>
+    </header>
+
+    <!-- ==================== HERO & INTERACTIVE 5-LAYER CUBE ==================== -->
+    <section class="hero-grid" aria-label="RPG Cubed Overview and Interactive Cube">
+      <div class="paper-sheet">
+        <span class="kicker">NO CHARACTER SHEET · NO INSTALL · PLAYABLE NOW</span>
+        <h2 class="hero-headline">Your Five-Layer Cube Is Both Your Build and Your Life.</h2>
+        <p class="lead-copy">
+          RPG³ replaces paper arithmetic with a spatial five-layer <strong>5x5 Cube</strong>.
+          Place stone tiles across Attribute, Experience, Skill, Equipment, and Inventory layers.
+          Touching tiles multiply your strength, incoming blows flip live tiles face-down, and
+          every Action Card in your hand comes straight from the gear, skills, and bonded
+          <strong>Sprite</strong> sitting face-up on your board.
+        </p>
+
+        <div class="cta-cluster">
+          <a class="btn-canon btn-canon-ink" href="https://anima7ed.github.io/rpg-cubed-playtest/">
+            Play Web-Box-0 Now (Free in Browser)
+          </a>
+          <a class="btn-canon btn-canon-gold-outline" href="#signup">
+            Sign Up for Guided Table Cohort
+          </a>
+        </div>
+
+        <div class="fact-strip">
+          <div class="fact-cell">
+            <div class="fact-val tnum">5 x 5 x 5</div>
+            <div class="fact-lbl">Spatial Cube Layers per Seat</div>
+          </div>
+          <div class="fact-cell">
+            <div class="fact-val tnum">113</div>
+            <div class="fact-lbl">Playable Starter Action Cards</div>
+          </div>
+          <div class="fact-cell">
+            <div class="fact-val tnum">60–90 min</div>
+            <div class="fact-lbl">East-Gate Rookery First Run</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive 5-Layer Cube Preview -->
+      <div class="paper-sheet">
+        <span class="kicker">TRY THE CORE HOOK · CLICK ANY TILE TO FLIP</span>
+        <h2 style="font-size: 1.45rem; margin-top: 2px">Interactive 5-Layer Cube Inspector</h2>
+
+        <div class="layer-tab-row" role="tablist" aria-label="Cube Layer Selector">
+          <button type="button" class="layer-tab is-active" data-layer="attribute">1. Attribute</button>
+          <button type="button" class="layer-tab" data-layer="xp">2. XP &amp; Rep</button>
+          <button type="button" class="layer-tab" data-layer="skill">3. Skill</button>
+          <button type="button" class="layer-tab" data-layer="equipment">4. Gear</button>
+          <button type="button" class="layer-tab" data-layer="inventory">5. Pack</button>
+        </div>
+
+        <div class="cube-stage">
+          <!-- Watercolor wash strictly behind glyph/grid plate (seed=17), never under prose -->
+          <svg class="cube-wash-bg" viewBox="0 0 360 360" preserveAspectRatio="none" aria-hidden="true">
+            <g filter="url(#rpg3-watercolor-wash)" opacity="0.16">
+              <circle cx="72" cy="70" r="64" fill="#57754c" />
+              <circle cx="288" cy="72" r="64" fill="#7a5a3a" />
+              <circle cx="74" cy="286" r="64" fill="#3f7d7a" />
+              <circle cx="286" cy="288" r="64" fill="#453a6e" />
+              <circle cx="180" cy="178" r="52" fill="#96487a" />
+            </g>
+          </svg>
+
+          <div id="interactive-cube-grid" class="cube-grid-interactive" aria-label="Interactive 5 by 5 Cube Grid"></div>
+        </div>
+
+        <div class="scalar-readout-row" id="scalar-readout-row">
+          <div class="scalar-pill">
+            Target Defense: <span class="tnum" id="readout-def">2</span>
+          </div>
+          <div class="scalar-pill">
+            Strength Scalar: <span class="tnum" id="readout-str">3</span>
+          </div>
+          <div class="scalar-pill">
+            Live Tiles: <span class="tnum" id="readout-life">6 / 6</span>
+          </div>
+        </div>
+
+        <div class="inspector-readout" id="layer-caption">
+          Click any placed stone tile above to simulate taking a hit or stowing gear. Two touching
+          Strength tiles score <strong>3</strong>; flipping one drops Strength to <strong>1</strong> immediately.
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== THREE TABLE PILLARS ==================== -->
+    <section class="pillars-grid" aria-label="Core Game Pillars">
+      <article class="pillar-card">
+        <span class="kicker">SPATIAL TENSION</span>
+        <h3>Adjacency Beats Arithmetic</h3>
+        <p>
+          Health, Strength, Finesse, and Arcane root in the four corners while Spirit bridges
+          neighbors. A lone tile scores <span class="tnum">1</span>, two touching score
+          <span class="tnum">3</span>, and three touching score <span class="tnum">5</span>.
+          Every hit you take is a tactical choice over which cluster you can afford to fracture.
+        </p>
+      </article>
+
+      <article class="pillar-card">
+        <span class="kicker">WALKOVER OR SLIDER</span>
+        <h3>Earned Mastery &amp; Push-Your-Luck</h3>
+        <p>
+          Outclass a foe's Target Defense and you spend <span class="tnum">1</span> Ready die for
+          an automatic Walkover hit. In contested clashes, set your own Difficulty Slider
+          (<span class="tnum">1</span> to <span class="tnum">10</span>) and roll Cost
+          (<span class="tnum">&lt;=</span>) against Effect (<span class="tnum">&gt;=</span>) to
+          balance extra tile flips against dice thrift.
+        </p>
+      </article>
+
+      <article class="pillar-card">
+        <span class="kicker">LIVING FRONTIER</span>
+        <h3>Sprites, Field Forges &amp; Four Peoples</h3>
+        <p>
+          Wild Sprites run on the same five-layer Cube law as players. Leave a defeated Sprite
+          helpless to open a bonding rite, or strike a <span class="tnum">1</span>-die Finishing
+          Blow to harvest crystal charge, ignite a field-forge glow, and trigger four rounds of
+          rapid North-Ridge harvesting.
+        </p>
+      </article>
+    </section>
+
+    <!-- ==================== LABELED SPIRIT-BAND LADDER (20 §9.4) ==================== -->
+    <section class="band-ladder-section" aria-label="Spirit-Band Progression Ladder">
+      <span class="kicker">PROGRESSION HORIZON · SPIRIT-BAND LADDER</span>
+      <h2 style="font-size: 1.4rem; margin-top: 2px">
+        Five Spirit Bands From Rookie Rookery to Mythic Reach
+      </h2>
+      <p style="margin: 4px 0 0; font-size: 14.5px; color: var(--ink-secondary)">
+        The open browser slice begins at <strong>Red Band</strong> (four corner tiles, zero Spirit)
+        at Angel's Rest and carries your party across the threshold into <strong>Fresh-Orange</strong>
+        upon placing your first Spirit tile and bonding a Prime Starter.
+      </p>
+
+      <div class="band-ladder-steps">
+        <div class="band-step-card is-slice-focus">
+          <span class="band-disc" style="background-color: #b5382c"></span>
+          <div>
+            <strong>1. Red Band</strong>
+            <div style="font-size: 12.5px; color: var(--ink-flavor)" class="tnum">Spirit 0 · Playable Now</div>
+          </div>
+        </div>
+        <div class="band-step-card is-slice-focus">
+          <span class="band-disc" style="background-color: #d2782a"></span>
+          <div>
+            <strong>2. Orange Band</strong>
+            <div style="font-size: 12.5px; color: var(--ink-flavor)" class="tnum">Spirit 1 · Graduation</div>
+          </div>
+        </div>
+        <div class="band-step-card">
+          <span class="band-disc" style="background-color: #ddb92f"></span>
+          <div>
+            <strong>3. Yellow Band</strong>
+            <div style="font-size: 12.5px; color: var(--ink-flavor)" class="tnum">Spirit 2 · Frontier</div>
+          </div>
+        </div>
+        <div class="band-step-card">
+          <span class="band-disc" style="background-color: #f4f1e8; border: 1.5px solid #8b857a"></span>
+          <div>
+            <strong>4. White Band</strong>
+            <div style="font-size: 12.5px; color: var(--ink-flavor)" class="tnum">Spirit 3 · High Guild</div>
+          </div>
+        </div>
+        <div class="band-step-card">
+          <span class="band-disc" style="background-color: #33689e"></span>
+          <div>
+            <strong>5. Blue Band</strong>
+            <div style="font-size: 12.5px; color: var(--ink-flavor)" class="tnum">Spirit 4 · Apex</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PLAYTEST LOOP & SIGNUP / SCOUT FUNNEL ==================== -->
+    <section id="signup" class="funnel-grid" aria-label="Playtest Cohort and Industry Scout Registration">
+      <div class="paper-sheet">
+        <span class="kicker">OPEN COHORT PROTOCOL</span>
+        <h2 style="font-size: 1.55rem; margin-top: 2px">How a Playtest Session Runs</h2>
+        <hr class="double-rule" />
+
+        <ol class="step-list">
+          <li>
+            <strong>Open the Browser Table:</strong> Launch
+            <a href="https://anima7ed.github.io/rpg-cubed-playtest/">Web-Box-0</a> on desktop or
+            tablet. For zero-friction group play, one host shares their window on Discord or Zoom;
+            for multi-browser tables, click <strong>Host Room URL</strong> to share a live seat link.
+          </li>
+          <li>
+            <strong>Run Two Contracts &amp; Bond a Partner:</strong> Pick two local Guild contracts
+            from the East-Gate Quest Board, vote openly on pooled Experience, place your first
+            Spirit tile, and bond one of six Prime Starters.
+          </li>
+          <li>
+            <strong>Pass Your Clearance Exam:</strong> Spar Sergeant Hal in a non-lethal coaching
+            bout or test your Cube against Collina on the North-Ridge hex map.
+          </li>
+          <li>
+            <strong>Export Your Telemetry JSON:</strong> Open the <strong>Log</strong> tab, score
+            Cool and Fun (<span class="tnum">1</span> to <span class="tnum">10</span>), jot two
+            honest friction or highlight notes, and click <strong>Export Telemetry (.json)</strong>.
+          </li>
+        </ol>
+
+        <div class="ownership-box">
+          <strong>For Publishers, Manufacturers &amp; Convention Organizers:</strong>
+          RPG³ is prototyped digitally first so table pacing is proven before injection-molded or
+          3D-printed Cube tooling locks. Animus world IP, digital CRPG/MMORPG rights, and creator
+          platform rights remain wholly studio-held; tabletop co-publishing, convention playtest
+          pods, and physical Cube manufacturing inquiries are welcome via the Scout tab.
+        </div>
+      </div>
+
+      <div class="paper-sheet">
+        <span class="kicker">COHORT REGISTRATION &amp; INDUSTRY DESK</span>
+        <h2 style="font-size: 1.55rem; margin-top: 2px">Join the Playtest or Request a Scout Brief</h2>
+        <hr class="double-rule" />
+
+        <div class="track-tabs" role="tablist" aria-label="Signup Track">
+          <button type="button" id="tab-tester" class="btn-canon is-active" data-track="playtester">
+            Playtester / GM Cohort
+          </button>
+          <button type="button" id="tab-scout" class="btn-canon" data-track="scout">
+            Publisher / Hardware / Scout
+          </button>
+        </div>
+
+        <form id="m5-funnel-form" class="form-grid">
+          <div class="field-row">
+            <label class="field-label">
+              <span>Name or Handle</span>
+              <input
+                type="text"
+                id="f-name"
+                class="input-canon"
+                required
+                placeholder="e.g. Kira / North-Ridge GM"
+              />
+            </label>
+            <label class="field-label">
+              <span>Email or Discord Handle</span>
+              <input
+                type="text"
+                id="f-contact"
+                class="input-canon"
+                required
+                placeholder="name@example.com or @handle"
+              />
+            </label>
+          </div>
+
+          <!-- Playtester-specific fields -->
+          <div id="tester-fields" class="field-row">
+            <label class="field-label">
+              <span>Table Size</span>
+              <select id="f-group-size" class="select-canon">
+                <option value="solo-eval">Solo Evaluator (Walkthrough + Sandbox)</option>
+                <option value="duo-2-3">Small Table (2 to 3 Players)</option>
+                <option value="full-table-4-plus">Full Group (GM + 3 to 4 Players)</option>
+                <option value="club-convention">University Club / Convention Pod</option>
+              </select>
+            </label>
+            <label class="field-label">
+              <span>Preferred Session Style</span>
+              <select id="f-session-style" class="select-canon">
+                <option value="self-run">Self-Run Browser Session + JSON Export</option>
+                <option value="hosted-discord">Guided Studio Discord Table</option>
+                <option value="both">Either Self-Run or Guided</option>
+              </select>
+            </label>
+          </div>
+
+          <!-- Scout-specific fields -->
+          <div id="scout-fields" class="field-row" style="display: none">
+            <label class="field-label">
+              <span>Studio, Publisher, or Outlet</span>
+              <input
+                type="text"
+                id="f-org"
+                class="input-canon"
+                placeholder="Organization or publication"
+              />
+            </label>
+            <label class="field-label">
+              <span>Conversation Lane</span>
+              <select id="f-scout-lane" class="select-canon">
+                <option value="ttrpg-publishing">Tabletop Distribution / Co-Publishing (IP Retained)</option>
+                <option value="physical-cube-mfg">Physical 5x5x5 Cube Tooling &amp; Manufacturing</option>
+                <option value="convention-press">Convention Playtest Pods / Creator Coverage</option>
+                <option value="strategic-partner">Walk-Away Franchise / Investor Inquiry</option>
+              </select>
+            </label>
+          </div>
+
+          <label class="field-label">
+            <span id="notes-label">Table Experience, Time Zone, or Notes (Optional)</span>
+            <textarea
+              id="f-notes"
+              rows="3"
+              class="textarea-canon"
+              placeholder="Tell us what tabletop games your group plays or what slice brief you would like."
+            ></textarea>
+          </label>
+
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between">
+            <button type="submit" class="btn-canon btn-canon-ink">
+              Generate Cohort Pass &amp; Register
+            </button>
+            <span style="font-size: 13px; color: var(--ink-flavor)">
+              Zero spam · Exports a verifiable JSON pass immediately
+            </span>
+          </div>
+        </form>
+
+        <div id="signup-receipt" class="receipt-box" style="display: none" role="status">
+          <strong id="receipt-headline">Registration Pass Ready</strong>
+          <p id="receipt-sub" style="margin: 4px 0 6px; color: var(--ink-secondary)">
+            Your registration packet is saved locally in this browser. Copy or download it below to
+            drop into the playtest channel alongside your exported session telemetry.
+          </p>
+          <pre id="receipt-json" class="receipt-pre"></pre>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <button type="button" id="btn-copy-pass" class="btn-canon btn-canon-ink">
+              Copy Pass to Clipboard
+            </button>
+            <button type="button" id="btn-download-pass" class="btn-canon btn-canon-gold-outline">
+              Download Pass (.json)
+            </button>
+            <a id="btn-launch-after-signup" class="btn-canon" href="https://anima7ed.github.io/rpg-cubed-playtest/">
+              Open Web-Box-0 Table
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <span>RPG³ &amp; Animus Universe · Independent Studio Preview · All Franchise Rights Reserved</span>
+      <span>
+        <a href="https://anima7ed.github.io/rpg-cubed-playtest/">Browser Tabletop</a> ·
+        <a href="https://anima7ed.github.io/rpg-cubed-playtest/M5_TESTER_BRIEF.md">1-Page Tester Brief</a>
+      </span>
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      // Optional webhook endpoint (e.g. Formspree or Cloudflare Worker) when configured at deploy time
+      var SIGNUP_ENDPOINT = window.RPG3_SIGNUP_ENDPOINT || '';
+
+      var ATTR_META = {
+        H: { label: 'Health', color: '#57754c' },
+        S: { label: 'Strength', color: '#7a5a3a' },
+        F: { label: 'Finesse', color: '#3f7d7a' },
+        A: { label: 'Arcane', color: '#453a6e' },
+        Sp: { label: 'Spirit', color: '#96487a' }
+      };
+
+      // Interactive 5-Layer Cube Demo State (Fresh-Orange Petranite Vanguard example)
+      var attrCells = [
+        { r: 0, c: 0, code: 'H', name: 'Health Corner', flipped: false },
+        { r: 0, c: 4, code: 'S', name: 'Strength Corner', flipped: false },
+        { r: 1, c: 4, code: 'S', name: 'Strength Tile #2', flipped: false },
+        { r: 4, c: 0, code: 'F', name: 'Finesse Corner', flipped: false },
+        { r: 4, c: 4, code: 'A', name: 'Arcane Corner', flipped: false },
+        { r: 1, c: 3, code: 'Sp', name: 'First Spirit Tile', flipped: false }
+      ];
+
+      var otherLayers = {
+        xp: {
+          caption: 'Layer 2 (Experience & Reputation): Party-pooled contract Experience and Guild Reputation sit here until spent on Skills, Talents, or quartermaster stock.',
+          tiles: [
+            { r: 0, c: 4, code: 'XP', color: '#7a5a3a', flipped: false },
+            { r: 1, c: 4, code: 'XP', color: '#7a5a3a', flipped: false },
+            { r: 2, c: 2, code: 'REP', color: '#3d382f', flipped: false }
+          ]
+        },
+        skill: {
+          caption: 'Layer 3 (Skill): Face-up Skills deal Action Cards into your hand. Click a Skill tile to test its 0-die Deliberate Flip Burst (restores on Site Break).',
+          tiles: [
+            { r: 0, c: 4, code: 'WPN', color: '#7a5a3a', flipped: false },
+            { r: 0, c: 0, code: 'SHD', color: '#57754c', flipped: false }
+          ]
+        },
+        equipment: {
+          caption: 'Layer 4 (Equipment): At most 2 Active Hands stay face-up at once. Flip Buckler or Cudgel face-down to stow it or absorb 1 incoming hit via Soak.',
+          tiles: [
+            { r: 0, c: 0, code: 'CDG', color: '#7a5a3a', flipped: false },
+            { r: 0, c: 1, code: 'BCK', color: '#57754c', flipped: false },
+            { r: 0, c: 3, code: 'PCK', color: '#4a453d', flipped: false },
+            { r: 0, c: 4, code: 'PCK', color: '#4a453d', flipped: false }
+          ]
+        },
+        inventory: {
+          caption: 'Layer 5 (Inventory): Holds field poultices, raw North-Ridge harvest stock, Arcane Crystals, and your 1x1 Keepsake Blank.',
+          tiles: [
+            { r: 0, c: 0, code: 'SLV', color: '#57754c', flipped: false },
+            { r: 0, c: 1, code: 'CRY', color: '#453a6e', flipped: false },
+            { r: 1, c: 0, code: 'KPK', color: '#3d382f', flipped: false }
+          ]
+        }
+      };
+
+      var currentLayer = 'attribute';
+      var gridEl = document.getElementById('interactive-cube-grid');
+      var captionEl = document.getElementById('layer-caption');
+      var defEl = document.getElementById('readout-def');
+      var strEl = document.getElementById('readout-str');
+      var lifeEl = document.getElementById('readout-life');
+
+      function glyphSvg(code, color, isFlipped) {
+        var stroke = isFlipped ? '#9a958d' : color;
+        if (code === 'H') {
+          return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>';
+        }
+        if (code === 'S') {
+          return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M5 19L19 5M15 5h4v4M9 5H5v4M19 19L5 5"/></svg>';
+        }
+        if (code === 'F') {
+          return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M8 4h5v8l5 3v3H6v-4l2-2V4z"/></svg>';
+        }
+        if (code === 'A') {
+          return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M5 19L17 7M15 4l1 2 2 1-2 1-1 2-1-2-2-1 2-1 1-2z"/></svg>';
+        }
+        if (code === 'Sp') {
+          return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="' + stroke + '" stroke-width="2"><path d="M12 3c2.5 3.5 5 6.2 5 10a5 5 0 0 1-10 0c0-3.8 2.5-6.5 5-10z"/></svg>';
+        }
+        return '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="' + stroke + '" stroke-width="2"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>';
+      }
+
+      function computeLiveScalars() {
+        var liveH = attrCells.filter(function (t) { return t.code === 'H' && !t.flipped; }).length;
+        var liveSList = attrCells.filter(function (t) { return t.code === 'S' && !t.flipped; });
+        var sEdges = liveSList.length === 2 ? 1 : 0;
+        var sScalar = liveSList.length + sEdges;
+        var bucklerUp = !otherLayers.equipment.tiles[1].flipped;
+        var totalLive = attrCells.filter(function (t) { return !t.flipped; }).length;
+        defEl.textContent = String(liveH + (bucklerUp ? 1 : 0));
+        strEl.textContent = String(sScalar);
+        lifeEl.textContent = String(totalLive) + ' / ' + String(attrCells.length);
+      }
+
+      function renderGrid() {
+        gridEl.innerHTML = '';
+        var activeList = currentLayer === 'attribute' ? attrCells : otherLayers[currentLayer].tiles;
+
+        for (var r = 0; r < 5; r++) {
+          for (var c = 0; c < 5; c++) {
+            var socket = document.createElement('div');
+            socket.className = 'cube-socket';
+            var found = null;
+            for (var i = 0; i < activeList.length; i++) {
+              if (activeList[i].r === r && activeList[i].c === c) {
+                found = activeList[i];
+                break;
+              }
+            }
+            if (found) {
+              var btn = document.createElement('button');
+              btn.type = 'button';
+              btn.className = 'stone-tile-btn' + (found.flipped ? ' is-flipped' : '');
+              var col = currentLayer === 'attribute' ? ATTR_META[found.code].color : found.color;
+              btn.title = 'Click to flip or restore tile (' + found.code + ')';
+              btn.innerHTML =
+                glyphSvg(found.code, col, found.flipped) +
+                '<span class="tile-code">' + (found.flipped ? 'FLIP' : found.code) + '</span>';
+              (function (tileRef) {
+                btn.addEventListener('click', function () {
+                  tileRef.flipped = !tileRef.flipped;
+                  renderGrid();
+                });
+              })(found);
+              socket.appendChild(btn);
+            }
+            gridEl.appendChild(socket);
+          }
+        }
+
+        computeLiveScalars();
+        if (currentLayer === 'attribute') {
+          captionEl.innerHTML =
+            'Layer 1 (Attribute): Click any stone tile above to flip it face-down. Two touching Strength tiles score <strong class="tnum">3</strong>; flipping one drops Strength to <strong class="tnum">1</strong> immediately.';
+        } else {
+          captionEl.textContent = otherLayers[currentLayer].caption;
+        }
+      }
+
+      var layerBtns = document.querySelectorAll('.layer-tab');
+      for (var b = 0; b < layerBtns.length; b++) {
+        layerBtns[b].addEventListener('click', function (ev) {
+          var targetLayer = ev.currentTarget.getAttribute('data-layer');
+          if (!targetLayer) return;
+          currentLayer = targetLayer;
+          for (var j = 0; j < layerBtns.length; j++) {
+            layerBtns[j].classList.toggle('is-active', layerBtns[j] === ev.currentTarget);
+          }
+          renderGrid();
+        });
+      }
+      renderGrid();
+
+      // Dual-Track Signup Form Logic
+      var activeTrack = 'playtester';
+      var tabTester = document.getElementById('tab-tester');
+      var tabScout = document.getElementById('tab-scout');
+      var testerFields = document.getElementById('tester-fields');
+      var scoutFields = document.getElementById('scout-fields');
+      var notesLabel = document.getElementById('notes-label');
+      var lastPayload = null;
+
+      function setTrack(track) {
+        activeTrack = track;
+        tabTester.classList.toggle('is-active', track === 'playtester');
+        tabScout.classList.toggle('is-active', track === 'scout');
+        testerFields.style.display = track === 'playtester' ? 'grid' : 'none';
+        scoutFields.style.display = track === 'scout' ? 'grid' : 'none';
+        notesLabel.textContent =
+          track === 'playtester'
+            ? 'Table Experience, Time Zone, or Notes (Optional)'
+            : 'Brief Request, Timeline, or Meeting Window (Optional)';
+      }
+
+      tabTester.addEventListener('click', function () { setTrack('playtester'); });
+      tabScout.addEventListener('click', function () { setTrack('scout'); });
+
+      var form = document.getElementById('m5-funnel-form');
+      var receiptBox = document.getElementById('signup-receipt');
+      var receiptJson = document.getElementById('receipt-json');
+      var receiptHeadline = document.getElementById('receipt-headline');
+      var btnCopy = document.getElementById('btn-copy-pass');
+      var btnDownload = document.getElementById('btn-download-pass');
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var nameVal = document.getElementById('f-name').value.trim();
+        var contactVal = document.getElementById('f-contact').value.trim();
+        if (!nameVal || !contactVal) return;
+
+        var payload = {
+          passSchema: 'rpg3-m5-funnel-v1',
+          registeredAt: new Date().toISOString(),
+          track: activeTrack,
+          name: nameVal,
+          contact: contactVal,
+          groupSize: activeTrack === 'playtester' ? document.getElementById('f-group-size').value : undefined,
+          sessionStyle: activeTrack === 'playtester' ? document.getElementById('f-session-style').value : undefined,
+          organization: activeTrack === 'scout' ? document.getElementById('f-org').value.trim() : undefined,
+          conversationLane: activeTrack === 'scout' ? document.getElementById('f-scout-lane').value : undefined,
+          notes: document.getElementById('f-notes').value.trim() || undefined,
+          playtestUrl: 'https://anima7ed.github.io/rpg-cubed-playtest/'
+        };
+        lastPayload = payload;
+
+        try {
+          var existing = JSON.parse(localStorage.getItem('rpg3_m5_registrations_v1') || '[]');
+          existing.unshift(payload);
+          localStorage.setItem('rpg3_m5_registrations_v1', JSON.stringify(existing.slice(0, 20)));
+        } catch (_err) {
+          // Ignore storage restrictions in private browsing
+        }
+
+        if (SIGNUP_ENDPOINT) {
+          fetch(SIGNUP_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }).catch(function () {});
+        }
+
+        receiptHeadline.textContent =
+          activeTrack === 'playtester'
+            ? 'Playtester Cohort Pass Generated'
+            : 'Industry & Scout Inquiry Packet Generated';
+        receiptJson.textContent = JSON.stringify(payload, null, 2);
+        receiptBox.style.display = 'block';
+      });
+
+      btnCopy.addEventListener('click', function () {
+        if (!lastPayload || !navigator.clipboard) return;
+        navigator.clipboard.writeText(JSON.stringify(lastPayload, null, 2)).then(function () {
+          btnCopy.textContent = 'Copied to Clipboard';
+          setTimeout(function () {
+            btnCopy.textContent = 'Copy Pass to Clipboard';
+          }, 2000);
+        });
+      });
+
+      btnDownload.addEventListener('click', function () {
+        if (!lastPayload) return;
+        var blob = new Blob([JSON.stringify(lastPayload, null, 2)], {
+          type: 'application/json;charset=utf-8'
+        });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = 'rpg3-m5-' + lastPayload.track + '-pass.json';
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+    })();
+  </script>
+</body>
+</html>
